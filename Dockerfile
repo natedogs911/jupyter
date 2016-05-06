@@ -8,17 +8,18 @@ USER root
 RUN apt-get -y update && apt-get -y install && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # Spark dependencies
-ENV APACHE_SPARK_VERSION 1.5.0
+ENV CDH_SPARK spark-1.5.0-cdh5.5.0
+ENV CDH_SPARK_TAR spark-1.5.0-cdh5.5.0.tar.gz
 RUN apt-get -y update && \
     apt-get install -y --no-install-recommends && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 RUN cd /tmp && \
-        wget -q http://www.apache.org/dist/spark/spark-${APACHE_SPARK_VERSION}/spark-${APACHE_SPARK_VERSION}-bin-hadoop2.6.tgz && \
-        echo "d8d8ac357b9e4198dad33042f46b1bc09865105051ffbd7854ba272af726dffc *spark-${APACHE_SPARK_VERSION}-bin-hadoop2.6.tgz" | sha256sum -c - && \
-        tar xzf spark-${APACHE_SPARK_VERSION}-bin-hadoop2.6.tgz -C /usr/local && \
-        rm spark-${APACHE_SPARK_VERSION}-bin-hadoop2.6.tgz
-RUN cd /usr/local && ln -s spark-${APACHE_SPARK_VERSION}-bin-hadoop2.6 spark
+        wget -q http://archive.cloudera.com/cdh5/cdh/5/${CDH_SPARK_TAR} && \
+        echo "840077b65391f6c1c9bd787149d14861ccb45f067d6b8a1d5cea596f251a1a8d ${CDH_SPARK_TAR}" | sha256sum -c - && \
+        tar xzf ${CDH_SPARK_TAR} -C /usr/local && \
+        rm ${CDH_SPARK_TAR}
+RUN cd /usr/local && ln -s ${CDH_SPARK} spark
 
 # Spark pointers
 ENV SPARK_HOME /usr/local/spark
